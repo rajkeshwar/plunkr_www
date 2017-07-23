@@ -1,0 +1,39 @@
+!!! 5
+html
+  head
+    meta(charset="utf-8")
+    meta(name="viewport",content="width=device-width, initial-scale=1.0")
+    title Plunker - Authorized
+  body
+    script
+      // <!--
+      !{state}
+      // -->
+      
+      if (!window.opener) {
+        alert('Orphaned auth window. Closing.');
+        window.close();
+      }
+      
+      if (typeof _plunker !== 'object' || !_plunker.auth) {
+        alert('Missing auth information. Closing.');
+        window.close();
+      }
+      
+      var parentHost = _plunker.url.www.replace(/https?:/, '');
+      var parentProtocol = window.location.protocol;
+      
+      var message = {
+        auth: _plunker.auth,
+      };
+      
+      try {
+        var test = window.opener.location.protocol;
+      } catch (__) {
+        parentProtocol = parentProtocol === 'https:'
+          ? 'http:'
+          : 'https:';
+      }
+      
+      window.opener.postMessage('plunker.auth.' + JSON.stringify(message), parentProtocol + parentHost);
+      window.close();
